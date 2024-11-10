@@ -13,8 +13,7 @@ Hosting: Firebase Hosting
 State Management: React Context API (or Redux)
 Styling: CSS (or Tailwind CSS for a modern look)
 # Screenshots:
-Authentication Page: ![Screenshot 2024-11-08 191852](https://github.com/user-attachments/assets/e57ad313-071d-4865-b96e-225728e55058)
-Dashboard Page: ![Screenshot 2024-11-08 192314](https://github.com/user-attachments/assets/32a42034-d70f-48ad-8e
-Home Page: ![Screenshot 2024-11-08 192326](https://github.com/user-attachments/assets/576b112a-c92d-4a63-ace0-bf9a78020090)
-a5-3d6b63db75c2)
+Authentication Page: ![Screenshot 2024-11-08 191852]
+Dashboard Page: ![Screenshot 2024-11-08 192314]
+Home Page: ![Screenshot 2024-11-08 192326]
 
