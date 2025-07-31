@@ -11,18 +11,27 @@ export function useModalState(defaultValue = false) {
 }
 
 export const useMediaQuery = query => {
-  const [matches, setMatches] = useState(
-    () => window.matchMedia(query).matches
-  );
+  const [matches, setMatches] = useState(() => {
+    try {
+      return window.matchMedia(query).matches;
+    } catch (error) {
+      console.error('Error in useMediaQuery:', error);
+      return false;
+    }
+  });
 
   useEffect(() => {
-    const queryList = window.matchMedia(query);
-    setMatches(queryList.matches);
+    try {
+      const queryList = window.matchMedia(query);
+      setMatches(queryList.matches);
 
-    const listener = evt => setMatches(evt.matches);
+      const listener = evt => setMatches(evt.matches);
 
-    queryList.addListener(listener);
-    return () => queryList.removeListener(listener);
+      queryList.addListener(listener);
+      return () => queryList.removeListener(listener);
+    } catch (error) {
+      console.error('Error setting up media query listener:', error);
+    }
   }, [query]);
 
   return matches;
@@ -32,18 +41,33 @@ export function usePresence(uid) {
   const [presence, setPresence] = useState(null);
 
   useEffect(() => {
+    if (!uid) return;
+
     const userStatusRef = database.ref(`/status/${uid}`);
 
-    userStatusRef.on('value', snap => {
-      if (snap.exists()) {
-        const data = snap.val();
-
-        setPresence(data);
+    const handleValue = snap => {
+      try {
+        if (snap.exists()) {
+          const data = snap.val();
+          setPresence(data);
+        } else {
+          setPresence(null);
+        }
+      } catch (error) {
+        console.error('Error processing presence data:', error);
+        setPresence(null);
       }
-    });
+    };
+
+    const handleError = error => {
+      console.error('Error listening to presence:', error);
+      setPresence(null);
+    };
+
+    userStatusRef.on('value', handleValue, handleError);
 
     return () => {
-      userStatusRef.off();
+      userStatusRef.off('value', handleValue);
     };
   }, [uid]);
 

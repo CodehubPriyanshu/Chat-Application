@@ -29,17 +29,24 @@ export const ProfileProvider = ({ children }) => {
         userRef = database.ref(`/profiles/${authObj.uid}`);
 
         userRef.on('value', snap => {
-          const { name, createdAt, avatar } = snap.val();
+          try {
+            const userData = snap.val();
+            if (userData) {
+              const { name, createdAt, avatar } = userData;
 
-          const data = {
-            name,
-            createdAt,
-            avatar,
-            uid: authObj.uid,
-            email: authObj.email,
-          };
+              const data = {
+                name,
+                createdAt,
+                avatar,
+                uid: authObj.uid,
+                email: authObj.email,
+              };
 
-          setProfile(data);
+              setProfile(data);
+            }
+          } catch (error) {
+            console.error('Error processing user data:', error);
+          }
           setIsLoading(false);
         });
 

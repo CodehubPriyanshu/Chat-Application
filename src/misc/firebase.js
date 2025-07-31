@@ -5,13 +5,13 @@ import 'firebase/storage';
 import 'firebase/messaging';
 
 const config = {
-  apiKey: "AIzaSyDKRo3jE_qh_r-4D6pjJI570bgvhk2XmOA",
-  authDomain: "chat-web-app77.firebaseapp.com",
-  databaseURL: "https://chat-web-app77-default-rtdb.firebaseio.com",
-  projectId: "chat-web-app77",
-  storageBucket: "chat-web-app77.appspot.com",
-  messagingSenderId: "771846954988",
-  appId: "1:771846954988:web:b5b06c290dd4cb9bf0eac9"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
 const app = firebase.initializeApp(config);
@@ -22,9 +22,15 @@ export const storage = app.storage();
 export const messaging = firebase.messaging.isSupported() ? app.messaging() : null;
 
 if (messaging) {
-  messaging.usePublicVapidKey('BC7fr8myEKX2iAPdEuPyISkKEKr3HUQE0m4_Xg3M3gm2YIZqWOXIHVIqR70h4MywhWMxKzpqBaDz1UPy3KmIbMI');
+  try {
+    messaging.usePublicVapidKey(process.env.REACT_APP_FIREBASE_VAPID_KEY);
 
-  messaging.onMessage(data => {
-    console.log(data);
-  });
+    messaging.onMessage(data => {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('FCM message received:', data);
+      }
+    });
+  } catch (error) {
+    console.error('Error setting up Firebase messaging:', error);
+  }
 }

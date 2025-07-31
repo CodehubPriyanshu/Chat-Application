@@ -1,81 +1,194 @@
-# 💬 Chat Application - Built with React
-This project is a real-time chat application developed using React.js. It provides a seamless messaging experience with an intuitive user interface.
+# Chat Application
 
-# 🚀 Features
-✅ Real-time Messaging - Instantly chat with users.
-✅ User Authentication - Secure login and signup.
-✅ Create & Join Chat Rooms - Start private or group conversations.
-✅ Dashboard Overview - View recent chats and activity.
-✅ Media Sharing - Send images and files.
-✅ Smooth UI - Modern and responsive design.
+A modern real-time chat application built with React and Firebase.
 
-# 🖥️ Screenshots
-### 🏠 Main Web Page
-This is the landing page where users can log in or register.
-![Screenshot 2025-02-03 083451](https://github.com/user-attachments/assets/3a6ac9cf-c314-4b16-b1da-c3c64b7ebcb9)
+## Features
 
-### 📊 Dashboard Page
-Users can view their chat rooms and recent conversations.
-![Screenshot 2025-02-03 083508](https://github.com/user-attachments/assets/a0f50526-fbde-420f-a699-8207af31fb67)
+- 🔐 **Authentication**: Google and Facebook login
+- 💬 **Real-time messaging**: Instant message delivery
+- 🎤 **Voice messages**: Record and send audio messages
+- 📁 **File sharing**: Upload and share files
+- 👥 **Room management**: Create and join chat rooms
+- 🟢 **Online status**: See who's online
+- 📱 **Responsive design**: Works on desktop and mobile
+- 🔔 **Push notifications**: Get notified of new messages
 
-# ➕ Creating a New Chat Room
-Users can create a new chat room with a custom name.
-![Screenshot 2025-02-03 083520](https://github.com/user-attachments/assets/dea1746f-d06d-4716-86db-654f8f8bca69)
+## Tech Stack
 
-# 📝 Room Information
-View details about the selected chat room.
-![Screenshot 2025-02-03 083538](https://github.com/user-attachments/assets/623aedca-ad32-4103-bd82-2118082f014b)
+- **Frontend**: React 18, React Router 5
+- **Backend**: Firebase (Authentication, Realtime Database, Storage, Cloud Messaging)
+- **UI Library**: RSuite
+- **Styling**: SCSS
+- **Build Tool**: Create React App
+- **Linting**: ESLint with Prettier
 
-# 🛠 Tech Stack
-Frontend: React.js, HTML, CSS
-State Management: Context API / Redux
-Backend: (Optional - If you use Firebase, Node.js, or another backend, mention it here)
-Database: (Optional - Firebase, MongoDB, etc.)
-Real-time Communication: WebSockets / Firebase Firestore
+## Prerequisites
 
-# 📂 Project Structure
+- Node.js (v14 or higher)
+- npm or yarn
+- Firebase project with the following services enabled:
+  - Authentication (Google & Facebook providers)
+  - Realtime Database
+  - Storage
+  - Cloud Messaging
 
-/chat-app
- ├── /src
- │   ├── /components   # Reusable components
- │   ├── /pages        # Chat, Login, Signup Pages
- │   ├── /context      # Global state management
- │   ├── /assets       # Images and icons
- │   ├── App.js        # Main App file
- │   ├── index.js      # Entry point
- ├── /public           # Static assets
- ├── package.json      # Dependencies & scripts
- ├── README.md         # Project Documentation
+## Installation
 
-# 🏗️ Getting Started
-### 1️⃣ Clone the Repository
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd Chat-Application
+   ```
 
-git clone https://github.com/your-username/chat-app.git
-cd chat-app
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-### 2️⃣ Install Dependencies
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` and add your Firebase configuration:
+   ```env
+   REACT_APP_FIREBASE_API_KEY=your_api_key_here
+   REACT_APP_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   REACT_APP_FIREBASE_DATABASE_URL=https://your_project-default-rtdb.firebaseio.com
+   REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+   REACT_APP_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+   REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   REACT_APP_FIREBASE_APP_ID=your_app_id
+   REACT_APP_FIREBASE_VAPID_KEY=your_vapid_key
+   ```
 
-npm install
+4. **Configure Firebase**
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Authentication with Google and Facebook providers
+   - Set up Realtime Database with appropriate security rules
+   - Enable Storage for file uploads
+   - Configure Cloud Messaging for push notifications
 
-### 3️⃣ Run the Application
+## Available Scripts
 
-npm start
-🔗 Open http://localhost:3000 to view it in your browser.
+- `npm start` - Runs the app in development mode
+- `npm run build` - Builds the app for production
+- `npm test` - Launches the test runner
+- `npm run lint` - Runs ESLint to check code quality
+- `npm run format` - Formats code with Prettier
+- `npm run format:lint` - Formats and lints code
 
-### 🚀 Deployment
-To deploy the chat app, use:
+## Firebase Security Rules
 
-npm run build
-This will create an optimized production build inside the build/ folder.
+### Realtime Database Rules
+```json
+{
+  "rules": {
+    "profiles": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "rooms": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "messages": {
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "status": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "$uid === auth.uid"
+      }
+    },
+    "fcm_tokens": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}
+```
 
-You can deploy the app using:
-Netlify
-Vercel
-Firebase Hosting
+### Storage Rules
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /chat/{roomId}/{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
 
-### 🎓 Learning Experience
-This project was built as part of my Internshala training, where I learned React.js and worked on practical applications with the guidance of my teacher.
-💡 Key takeaways from this project:
-✔️ Understanding state management in React
-✔️ Working with WebSockets for real-time chat
-✔️ UI/UX improvements for better user experience
+## Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── chat-window/    # Chat interface components
+│   ├── dashboard/      # Dashboard components
+│   └── rooms/          # Room management components
+├── context/            # React Context providers
+├── misc/               # Utilities and Firebase config
+├── pages/              # Page components
+└── styles/             # SCSS stylesheets
+```
+
+## Key Components
+
+- **ProfileProvider**: Manages user authentication state
+- **RoomsProvider**: Manages chat rooms data
+- **Chat**: Main chat interface
+- **Sidebar**: Navigation and room list
+- **AudioMsgBtn**: Voice message recording
+
+## Browser Support
+
+- Chrome (recommended)
+- Firefox
+- Safari
+- Edge
+
+## Known Issues
+
+- Voice messages use WebM format (may not be supported in all browsers)
+- Some older browsers may not support all features
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Firebase Hosting
+1. Install Firebase CLI: `npm install -g firebase-tools`
+2. Login: `firebase login`
+3. Initialize: `firebase init hosting`
+4. Build: `npm run build`
+5. Deploy: `firebase deploy`
+
+### Other Platforms
+The built files in the `build` folder can be deployed to any static hosting service.
+
+## Support
+
+If you encounter any issues or have questions, please open an issue on GitHub.

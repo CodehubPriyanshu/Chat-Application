@@ -8,16 +8,28 @@ const SignIn = () => {
     try {
       const { additionalUserInfo, user } = await auth.signInWithPopup(provider);
 
-      if (additionalUserInfo.isNewUser) {
+      if (additionalUserInfo?.isNewUser && user) {
         await database.ref(`/profiles/${user.uid}`).set({
-          name: user.displayName,
+          name: user.displayName || 'Anonymous User',
           createdAt: firebase.database.ServerValue.TIMESTAMP,
         });
       }
 
-      Alert.success('Signed in', 4000);
+      Alert.success('Signed in successfully', 4000);
     } catch (err) {
-      Alert.error(err.message, 4000);
+      console.error('Sign in error:', err);
+      
+      let errorMessage = 'Failed to sign in. Please try again.';
+      
+      if (err.code === 'auth/popup-closed-by-user') {
+        errorMessage = 'Sign in was cancelled.';
+      } else if (err.code === 'auth/popup-blocked') {
+        errorMessage = 'Popup was blocked. Please allow popups and try again.';
+      } else if (err.code === 'auth/network-request-failed') {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+      
+      Alert.error(errorMessage, 4000);
     }
   };
 
