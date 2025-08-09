@@ -26,8 +26,6 @@ yarn-error.log*
 # Firebase
 .firebase
 .firebaserc
-firebase.json
-database.rules.json
 functions/
 
 # Vercel
